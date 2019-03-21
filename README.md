@@ -30,7 +30,7 @@ Write an application which interprets binary strings as unsigned and signed inte
 ##### Example bit pattern
 
 ```python
-bit_pattern = '100011110101010010011000111100010'
+bit_pattern = '10001111010101001001100011110010'
 ```
 
 #### Interpretation screen
