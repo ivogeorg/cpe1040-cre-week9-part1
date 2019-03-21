@@ -3,31 +3,56 @@
 Assignment specifications can be found in the [README](README.md).
 
 ### Program decomposition. 
-In other words, breaking down the tasks to where each one is either very small and can be accomplished with a 1-3 lines of code on its own (call this unit task), or is more complex, but is just an assembly of unit tasks that are already done (call this composite task).
+In other words, breaking down the tasks to a level at which each one is either very small and can be accomplished with a 1-3 lines of code on its own (call this unit task), or is more complex, but is just an assembly of unit tasks that are already done (call this composite task).
 
-1. Toggling/switching between two screens with a long press of the **B** button.
-   1. Define a variable indicating which screen you are in. Can be 0 and 1, so you can just increment it modulo 2 when you detect the toggle-to-other screen signal. Example:
+1. Toggling/switching between two screens with a long press (aka hold) of the **B** button.
+   1. Define a variable indicating which screen you are in. Can be 0 and 1, so you can just increment it _modulo 2_ when you detect the toggle-screen signal. Example:
       ```python
       screen = 0  # initial value
 
       # then, when you identify the toggle-screen signal
       screen = (screen + 1) % 2  # thus, it will toggle 0, 1, 0, 1, ...
       ```
-   2. Distinguish a long press (aka hold) of a button from simple press. You might need to use a timed delay.
-2. Defining the bit pattern to interpret. This is the first screen (`screen = 0`). 
+   2. Distinguish a long press (aka hold) of a button from simple press. You will need to count the milliseconds between press and release of the button. Consider the [`is_pressed`](https://microbit-micropython.readthedocs.io/en/latest/button.html) function and the functions in [`utime`](https://microbit-micropython.readthedocs.io/en/latest/utime.html). the following code snippet:
+      ```python
+      import utime
+
+      hold_ms = 2000  # set a hold threshold (2000 ms = 2 s), you can tune later
+      if button_b.is_pressed():
+          start_ms = utime.ticks_ms()
+          while True:
+              if button_b.is_pressed():
+                  break
+          if utime.ticks_diff(utime.ticks_ms(), start_ms) < hold_ms:
+              # simple press
+              pass
+          else:
+              # hold
+              pass
+      ```
+2. Defining the bit pattern to interpret. This is the first "screen" (`screen = 0`). 
    1. Toggle LEDs on/off in the proper order (from top-left, row-by-row, to bottom-right) on one page (so, just the first 25).
-      1. Toggle a single LED on and off with the correct function from the [`display`](https://microbit-micropython.readthedocs.io/en/latest/display.html) object of the micro:bit. Use the **A** button.
-      2. OFF is 0. Define a constant for ON (1-9), which you can fine-tune at the end. _See the section on the cursor below._
-      3. Advance one position each time the B button is pressed.
+      1. Toggle a single LED on and off with the correct function from the [`display`](https://microbit-micropython.readthedocs.io/en/latest/display.html) object of the micro:bit. Use the **A** button, and keep track of whether the LED is on or off:
+         ```python
+         led_value = 0  # off
+         if button_a.was_pressed():
+             led_value = (led_value + 1) % 2  # alternating: if 1, then 0; if 0, then 1
+         ```
+      2. OFF is 0. Define a constant for ON (1-9), which you can fine-tune at the end. _See the section on the cursor further below._ Example:
+         ```python
+         but_on_intensity = 5
+         ```
+      3. Advance one position each time the **B** button is pressed. _See the next section on keeping track._
    2. Manage the bit pattern that will need to be interpreted.
       1. Hold the bit pattern in a list. Start with an empty list. Example:
          ```python
          bit_pattern = []
          ```
-      2. Append a bit character (‘1’ or ‘0’) to the list each time the B button is pressed.
+      2. Append a bit character (`'1'` or `'0'`) to the list each time the **B** button is pressed.
          ```python
          # then, in the code that is getting user selections
          bit_pattern.append('1')  # append the 1 or 0 you just got
+         # see above for keeping thrack of the value while A is toggled
          ```
       3. Finally, to get the bit pattern as a string, use the `join()` method of a string object, as in 
          ```python
@@ -35,7 +60,7 @@ In other words, breaking down the tasks to where each one is either very small a
          # or
          bit_pattern_as_string = ''.join(bit_pattern)
          ```
-         which results in `‘1011’`. Note the empty string `‘’`, on which `join()` is called. The idea is that the string on which `join()` is called will be the delimiter of the joined strings. If instead it were `‘ ‘` (a single space), the result would be `‘1 0 1 1’`.
+         which results in `'1011'`. Note the empty string `'''`, on which `join()` is called. The idea is that the string on which `join()` is called will be the delimiter of the joined strings. If instead it were `' '` (a single space), the result would be `'1 0 1 1'`.
    3. Put (1) and (2) together, by switching to a blank screen when the 25th (i = 24) bit is selected with the press of the **B** button. Note that you have to use index `j = i - 24` for the second page, because you are starting anew, or `len(bit_pattern) - 25`. _See next section._
    4. Calculating which LED _(x: 0-4, y: 0-4)_ position corresponds to a bit at a specific index in a 32-bit pattern _(i: 0-31)_.
       1. Check the coordinate system by lighting one LED at a time with the proper function of the display object. Find where the origin _(0, 0)_ is.
