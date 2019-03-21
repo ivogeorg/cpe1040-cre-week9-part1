@@ -26,6 +26,12 @@ Write an application which interprets binary strings as unsigned and signed inte
 6. The LEDs mean the following:
    1. LED on:  1
    2. LED off: 0 
+   
+##### Example bit pattern
+
+```python
+bit_pattern = '100011110101010010011000111100010'
+```
 
 #### Interpretation screen
 
@@ -53,3 +59,7 @@ Write an application which interprets binary strings as unsigned and signed inte
 4. Code in PyCharm and mu, and test until you are satisfied with the functionality.
 5. Commit your code in PyCharm (or an alternative Git interface).
 6. Push to remote on Github.
+
+## Guidance
+
+Detailed assignment guidance can be found in the [program notes](program-notes.md).

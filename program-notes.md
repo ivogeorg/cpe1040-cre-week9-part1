@@ -1,3 +1,7 @@
+## Programming notes
+
+Assignment specifications can be found in the [README](README.md).
+
 ### Program decomposition. 
 In other words, breaking down the tasks to where each one is either very small and can be accomplished with a 1-3 lines of code on its own (call this unit task), or is more complex, but is just an assembly of unit tasks that are already done (call this composite task).
 
@@ -72,18 +76,18 @@ In other words, breaking down the tasks to where each one is either very small a
          # define "conversion" functions like 
          def convert_to_float(bit_pattern):
              pass   # this is a placeholder for the body of a yet unimplemented function
-    
-    
+        
          def convert_to_chars(bit_pattern):
              pass 
-
          
          # define a dictionary that looks like 
          interpret_dict = {'F': convert_to_float, 'C': convert_to_chars}
  
-     
+         # in the code for the interpretation selection you have something like
+         choice = choices_list[2]  # which is 'F'
+    
          # once you have a selection for the data type, you can call the correct function like 
-         to_scroll = interpret_dict[‘F’](bit_pattern_as_string)
+         to_scroll = interpret_dict[choice](bit_pattern_as_string)
          ```
       4. For the curious, in the above code snippet, you are not storing the _names_ of the functions, but _references to the functions themselves_. Also, you can call them like this, because they are _first-class entities_ in Python.
  
