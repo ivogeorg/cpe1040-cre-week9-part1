@@ -103,7 +103,7 @@ In other words, breaking down the tasks to a level at which each one is either v
              
          # other code...
          ```
-3. **(TODO)** Interpreting the bit pattern. This is the second screen.
+3. Interpreting the bit pattern. This is the second screen.
    1. You already know how to toggle screens, so now you can toggle pages. The distinction between _screens_ and _pages_ is artificial, so it doesn’t matter to the micro:bit, but it helps us in the program decomposition. This screen has two pages: the data type selection and the scrolling display of the of the bit pattern interpreted as the selected data type. The user should be able to toggle between the two, so they can select different data types to see the same bit pattern interpreted as.
       1. Design 4 `microbit.Image()` constants for the 4 data types:
          - **U** for unsigned integer.
