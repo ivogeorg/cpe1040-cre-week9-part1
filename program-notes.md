@@ -34,13 +34,13 @@ In other words, breaking down the tasks to a level at which each one is either v
    1. Toggle LEDs on/off in the proper order (from top-left, row-by-row, to bottom-right) on one page (so, just the first 25).
       1. Toggle a single LED on and off with the correct function from the [`display`](https://microbit-micropython.readthedocs.io/en/latest/display.html) object of the micro:bit. Use the **A** button, and keep track of whether the LED is on or off:
          ```python
-         led_value = 0  # off
+         current_led_value = 0  # off
          if button_a.was_pressed():
-             led_value = (led_value + 1) % 2  # alternating: if 1, then 0; if 0, then 1
+             led_value = (current_led_value + 1) % 2  # alternating: if 1, then 0; if 0, then 1
          ```
       2. OFF is 0. Define a constant for ON (1-9), which you can fine-tune at the end. _See the section on the cursor further below._ Example:
          ```python
-         but_on_intensity = 5
+         bit_on_intensity = 5
          ```
       3. Advance one position each time the **B** button is pressed. _See the next section on keeping track._
    2. Manage the bit pattern that will need to be interpreted.
@@ -63,13 +63,13 @@ In other words, breaking down the tasks to a level at which each one is either v
          which results in `'1011'`. Note the empty string `'''`, on which `join()` is called. The idea is that the string on which `join()` is called will be the delimiter of the joined strings. If instead it were `' '` (a single space), the result would be `'1 0 1 1'`.
    3. Put (1) and (2) together, by switching to a blank screen when the 25th (i = 24) bit is selected with the press of the **B** button. Note that you have to use index `j = i - 24` for the second page, because you are starting anew, or `len(bit_pattern) - 25`. _See next section._
    4. Calculating which LED _(x: 0-4, y: 0-4)_ position corresponds to a bit at a specific index in a 32-bit pattern _(i: 0-31)_.
-      1. Check the coordinate system by lighting one LED at a time with the proper function of the display object. Find where the origin _(0, 0)_ is.
-      2. Remember the basic equations for finding the x-coordinate and y-coordinate from the index i (the 5 comes because we have a 5-by-5 matrix of LEDs):
-         - `x = i % 5` (modulo operator, which leaves only the remainder of the division)
+      1. Check the coordinate system by lighting one LED at a time with the proper function of the [`display`](https://microbit-micropython.readthedocs.io/en/latest/display.html) object. Find where the origin _(0, 0)_ is.
+      2. The basic equations for finding the x-coordinate and y-coordinate from the index i (the 5 comes because we have a 5-by-5 matrix of LEDs):
+         - `x = i % 5` (modulo operator, which leaves only the remainder of the integer division)
          - `y = i // 5` (integer division, which leaves only the whole part of the division as an integer)
-      3. Since the index starts at _0_, you actually use `len(bit_pattern)` for the current index. Think about it!
+      3. Since the index starts at _0_, you can actually use `len(bit_pattern)` for the current index. Think about it!
       4. Depending on where _(0, 0)_ happens to be, one of the equations or both equations might need to be adjusted. _Note that we are assuming that x is “across”/”horizontal” and y is “up-down”/”vertical”. If they are not (that is, they are reversed) the equations have to be reversed._
-         - They work in their original form if _(0, 0)_ is _top-left_.
+         - They work in their original form if _(0, 0)_ is at the _top-left_.
          - If _x=0_ is on the right, instead of left, the equation becomes `x = 4 - (i % 5)`. This corresponds to _mirroring along the vertical axis_. Check it!
          - If _y=0_ is at the bottom, instead of at the top, the equation becomes `y = 4 - (i // 5)`. This corresponds to _mirroring along the horizontal axis_. Check it!
    5. Adding a blinking cursor.
@@ -77,7 +77,32 @@ In other words, breaking down the tasks to a level at which each one is either v
       2. The cursor is the current _(x, y)_ position which is being defined. This is where the fact that the LEDs have a range of intensity _(0-9)_ comes in handy. We have two things we want to accomplish with the cursor:
          - indicate which is the current LED to be defined, and
          - show its current value (OFF for 0 and ON for 1). 
-      3. If we choose the intensity of the LED at 5 for ON (see the section on LED toggling above), we can have the cursor blink **55-99-55-99-55** for ON and **00-99-00-99-00** for OFF. This will be perfectly distinguishable for the human eye. 
+      3. If we choose the intensity of the LED at 5 for ON (see the section on LED toggling above), we can have the cursor blink **55-99-55-99-55** for ON and **00-99-00-99-00** for OFF. This will be perfectly distinguishable for the human eye. Here's an example putting it all together:
+         ```python
+         import utime
+
+         blink_half_period = 500  # half a second
+         blink_value = 0
+         blink_ms = utime.ticks_ms()
+
+         current_led_value = 1
+         x = 3
+         y = 2
+
+         while True:
+             check_ms = utime.ticks_ms()
+             if utime.tick_diff(check_ms, blink_ms) >= blink_half_period:
+                 blink_ms = check_ms
+                 blink_value = (blink_value + 1) % 2
+                 if blink_value:
+                     display.set_pixel(x, y, 9)
+                 elif current_led_value:
+                     display.set_pixel(x, y, bit_on_intensity)
+                 else:
+                     display.set_pixel(x, y, 0)
+             
+         # other code...
+         ```
 3. **(TODO)** Interpreting the bit pattern. This is the second screen.
    1. You already know how to toggle screens, so now you can toggle pages. The distinction between _screens_ and _pages_ is artificial, so it doesn’t matter to the micro:bit, but it helps us in the program decomposition. This screen has two pages: the data type selection and the scrolling display of the of the bit pattern interpreted as the selected data type. The user should be able to toggle between the two, so they can select different data types to see the same bit pattern interpreted as.
       1. Design 4 `microbit.Image()` constants for the 4 data types:
@@ -90,9 +115,13 @@ In other words, breaking down the tasks to a level at which each one is either v
          i = (i + 1) % 4  # this causes i to change as follows: 0, 1, 2, 3, 0, 1, 2, 3, 0, … 
          ```
       3. Scroll through the 4 data-type images with the button **A**.
-   2. **(TODO)** Interpreting.
+   2. Interpreting.
       1. We have learned about different data types. Even though Python does not require you to explicitly define the types of your variables, it definitely keeps track of their types (aka classes, since everything in Python is an object) behind the scenes. For example, if you try to do something with a variable that is doesn’t work for its type, Python will respond with a **`TypeError`**. But Python also allows you to convert values from one type to another.
-         - (TODO) *Guidance for each of the 4 conversions*
+         - Verify at the console that `int(bit_pattern_str, 2)` converts the bit pattern string to an integer in decimal. The second argument `2` indicates the base.
+         - Because Python presumes to work with _"infinitely"_ large integers, interpreting the bit pattern string as a fixed-width 32-bit _signed_ integer has to follow the 2's complement rules. For now, leave unimplemented by just returning `'Unimplemented'` to the caller of the function so you can scroll this text when the format choice is `'I'`. 
+         - Because floating-point numbers in Python are implicitly `binary64`, interpreting the bit pattern string as an IEEE 754 floating-point number has to follow the standard. For now, leave unimplemented by just returning `'Unimplemented'` to the caller of the function so you can scroll this text when the format choice is `'F'`.
+         - Because strings in Python are assumed to be `UTF-8` encoded, interpreting the 32-bit pattern as a string of 4 ASCII characters has to follow the general decoding process. For now, leave unimplemented by just returning `'Unimplemented'` to the caller of the function so you can scroll this text when the format choice is `'C'`.
+         - I will provide the functions after the break, explain them, and we'll finish Part 2 of this assignment. 
       2. You will have to associate two different things with the index:
          - the corresponding `microbit.Image()` constant you have to display, and 
          - the function you will use to get the corresponding interpretation of the bit pattern to scroll on the next page
