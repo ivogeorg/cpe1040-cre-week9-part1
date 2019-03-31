@@ -21,13 +21,13 @@ In other words, breaking down the tasks to a level at which each one is either v
       if button_b.is_pressed():
           start_ms = utime.ticks_ms()
           while True:
-              if button_b.is_pressed():
+              if not button_b.is_pressed():
                   break
           if utime.ticks_diff(utime.ticks_ms(), start_ms) < hold_ms:
               # simple press
               pass
           else:
-              # hold
+              # hold: toggle the screen
               pass
       ```
 2. Defining the bit pattern to interpret. This is the first "screen" (`screen = 0`). 
