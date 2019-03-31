@@ -60,7 +60,7 @@ In other words, breaking down the tasks to a level at which each one is either v
          # or
          bit_pattern_as_string = ''.join(bit_pattern)
          ```
-         which results in `'1011'`. Note the empty string `'''`, on which `join()` is called. The idea is that the string on which `join()` is called will be the delimiter of the joined strings. If instead it were `' '` (a single space), the result would be `'1 0 1 1'`.
+         which results in `'1011'`. Note the empty string `''`, on which `join()` is called. The idea is that the string on which `join()` is called will be the delimiter of the joined strings. If instead it were `' '` (a single space), the result would be `'1 0 1 1'`.
    3. Put (1) and (2) together, by switching to a blank screen when the 25th (i = 24) bit is selected with the press of the **B** button. Note that you have to use index `j = i - 24` for the second page, because you are starting anew, or `len(bit_pattern) - 25`. _See next section._
    4. Calculating which LED _(x: 0-4, y: 0-4)_ position corresponds to a bit at a specific index in a 32-bit pattern _(i: 0-31)_.
       1. Check the coordinate system by lighting one LED at a time with the proper function of the [`display`](https://microbit-micropython.readthedocs.io/en/latest/display.html) object. Find where the origin _(0, 0)_ is.
@@ -143,7 +143,7 @@ In other words, breaking down the tasks to a level at which each one is either v
          # once you have a selection for the data type, you can call the correct function like 
          to_scroll = interpret_dict[choice](bit_pattern_as_string)
          ```
-      4. For the curious, in the above code snippet, you are not storing the _names_ of the functions, but _references to the functions themselves_. Also, you can call them like this, because they are _first-class entities_ in Python.
+      4. For the curious, in the above code snippet, you are not storing the _names_ of the functions, but _references to the functions themselves_. Also, you can call them like this, because they are *first-class entities* in Python.
  
 ### (TODO) Program composition
 In other words, putting the different components together in a way that makes sense from the perspective of the user, anticipating what the user might try to do, and gently guiding them toward the intended behavior.
