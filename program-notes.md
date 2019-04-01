@@ -115,7 +115,7 @@ In other words, breaking down the tasks to a level at which each one is either v
          i = (i + 1) % 4  # this causes i to change as follows: 0, 1, 2, 3, 0, 1, 2, 3, 0, … 
          ```
       3. Scroll through the 4 data-type images with the button **A**.
-   2. Interpreting.
+   2. Interpretation.
       1. We have learned about different data types. Even though Python does not require you to explicitly define the types of your variables, it definitely keeps track of their types (aka classes, since everything in Python is an object) behind the scenes. For example, if you try to do something with a variable that is doesn’t work for its type, Python will respond with a **`TypeError`**. But Python also allows you to convert values from one type to another.
          - Verify at the console that `int(bit_pattern_str, 2)` converts the bit pattern string to an integer in decimal. The second argument `2` indicates the base.
          - Because Python presumes to work with _"infinitely"_ large integers, interpreting the bit pattern string as a fixed-width 32-bit _signed_ integer has to follow the 2's complement rules. For now, leave unimplemented by just returning `'Unimplemented'` to the caller of the function so you can scroll this text when the format choice is `'I'`. 
@@ -143,7 +143,8 @@ In other words, breaking down the tasks to a level at which each one is either v
          # once you have a selection for the data type, you can call the correct function like 
          to_scroll = interpret_dict[choice](bit_pattern_as_string)
          ```
-      4. For the curious, in the above code snippet, you are not storing the _names_ of the functions, but _references to the functions themselves_. Also, you can call them like this, because they are *first-class entities* in Python.
+      4. For the curious, in the above code snippet, you are not storing the *names* of the functions, but *references to the functions themselves*. Also, you can call them like this, because they are *first-class entities* in Python.
+      5. *Implementation of the functions will be the task for Part 2 of this assignment.*
  
 ### (TODO) Program composition
 In other words, putting the different components together in a way that makes sense from the perspective of the user, anticipating what the user might try to do, and gently guiding them toward the intended behavior.
