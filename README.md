@@ -1,4 +1,4 @@
-# CPE 1040 - Comprehensive Review & Enrichment - Week 9 - Part I
+# CPE 1040 - Comprehensive Review & Enrichment - Week 9 - Python: Part 1
 
 Part I of the CRE in week 9 consists of a programming assignment for the micro:bit in MicroPython.
 
