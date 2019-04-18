@@ -164,6 +164,7 @@ while True:
     show()
 
     # poll for control actions and dispatch corresponding functions
+    hold_b = False
     if button_b.is_pressed():
         start_ms = utime.ticks_ms()
         while True:
